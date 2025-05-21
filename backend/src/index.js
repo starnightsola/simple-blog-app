@@ -1,11 +1,10 @@
 const express = require('express')
+const postsRouter = require('./routes/posts')
 const app = express()
 
-app.get('/', (req, res) => {
-  res.send('Hello from Express!')
-})
+app.use(express.json())
+app.use('/api/posts', postsRouter)
 
-const PORT = 3001
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`)
+app.listen(3000, () => {
+  console.log('🚀 サーバー起動中 http://localhost:3000')
 })
