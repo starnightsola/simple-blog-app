@@ -115,7 +115,7 @@ router.put('/:id', (req, res) => {
 // 記事削除API（DELETE /api/posts/:id）
 router.delete('/:id', (req, res) => {
   const postId = req.params.id
-  const sql = 'DEL FROM posts WHERE id = ?'
+  const sql = 'DELETE FROM posts WHERE id = ?'
 
   db.run(sql, [postId], function (err) {
     if (err) {
