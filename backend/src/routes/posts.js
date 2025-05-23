@@ -52,6 +52,9 @@ router.post('/',(req, res) => {
   // 更新日時（updatedAt）＝最初は同じ（あとで編集されたら更新される）
   const updatedAt = createdAt
 
+  // INSERT INTO は データベースに新しい記事を追加する命令
+  // posts テーブルに新しい行（レコード）を追加
+  // createdAt と updatedAt を同時に保存
   const sql = 'INSERT INTO posts (title, content, createdAt, updatedAt) VALUES (?, ?, ?, ?)'
 
   const params = [title, content, createdAt, updatedAt]
@@ -68,6 +71,41 @@ router.post('/',(req, res) => {
         title,
         content,
         createdAt,
+        updatedAt
+      }
+    })
+  })
+})
+
+// 記事を更新するAPI（PUT /api/posts/:id）
+router.put('/:id', (req, res) => {
+  const postId = req.params.id
+  const { title, content } = req.body
+  if(!title || !content ) {
+    return res.status(400).json({ error: 'タイトルと本文は必須です'})
+  }
+
+  const updatedAt = new Date().toISOString()
+  // UPDATE は 既にある記事の内容を上書き（更新）する命令
+  // WHERE id = ? で「どの記事を更新するか」を指定
+  // updatedAt だけ変更（createdAt はそのまま）
+  const sql = 'UPDATE posts SET title = ?, content = ?, updatedAt = ? WHERE id = ?'
+
+  const params = [title, content, updatedAt, postId]
+
+  db.run(sql, params, function (err) {
+    if (err) {
+      return res.status(500).json({ error: 'データベースエラー' })
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ error: '記事が見つかりません' })
+    }
+    res.status(200).json({
+      message: '記事が更新されました',
+      post: {
+        id: Number(postId),
+        title,
+        content,
         updatedAt
       }
     })
