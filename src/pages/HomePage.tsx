@@ -34,7 +34,7 @@ const HomePage = () => {
   const fetchPosts = async () => {
     try {
       // `fetch` を使って、外部APIにGETリクエストを送信。
-      const res = await fetch('https://jsonplaceholder.typicode.com/posts')
+      const res = await fetch('/api/posts')
 
       // res.ok はステータスコードが 200系かどうか（成功かどうか）を示します。
       if (!res.ok) throw new Error('記事の取得に失敗しました')
