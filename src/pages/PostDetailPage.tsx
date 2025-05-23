@@ -81,7 +81,7 @@ const PostDetailPage = () => {
           <Text fontWeight="bold" fontSize="xl" className={styles.postTitle}>
             {post.title}
           </Text>
-          <Text whiteSpace="pre-line">{post.body}</Text>
+          <Text whiteSpace="pre-line">{post.content}</Text>
         </div>
       )}
 

@@ -148,7 +148,7 @@ const HomePage = () => {
                     {post.title}
                   </Text>
                 </Link>
-                <Text noOfLines={2}>{post.body}</Text>
+                <Text noOfLines={2}>{post.content}</Text>
               </div>
             ))}
         </div>

@@ -9,7 +9,7 @@ import theme from './theme'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ChakraProvider theme={theme}>
-      <BrowserRouter basename="/training/02">
+      <BrowserRouter>
         <App />
       </BrowserRouter>
     </ChakraProvider>
