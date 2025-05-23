@@ -18,7 +18,7 @@ const PostDetailPage = () => {
   const fetchPost = async () => {
     if (!postId) return
     try {
-      const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`)
+      const res = await fetch(`/api/posts/${postId}`)
       if (!res.ok) throw new Error('データの取得に失敗しました')
       const data = await res.json()
       setPost(data)
