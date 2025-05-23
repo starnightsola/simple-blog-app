@@ -112,5 +112,23 @@ router.put('/:id', (req, res) => {
   })
 })
 
+// 記事削除API（DELETE /api/posts/:id）
+router.delete('/:id', (req, res) => {
+  const postId = req.params.id
+  const sql = 'DEL FROM posts WHERE id = ?'
+
+  db.run(sql, [postId], function (err) {
+    if (err) {
+      return res.status(500).json({ error: 'データベースエラー' })
+    }
+    // 削除対象がなかった場合
+    if (this.changes === 0){
+      return res.status(404).json({ error: '記事が見つかりません' })
+    }
+    // 成功（204: No Content）
+    res.status(204).send()
+  })
+})
+
 // このファイルの外に router を渡す（export する）
 module.exports = router
