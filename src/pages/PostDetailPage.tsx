@@ -6,6 +6,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import { Link } from '@chakra-ui/react'
 import styles from './PostDetail.module.css'
 import loadingStyles from './Loading.module.css'
+import { useNavigate } from 'react-router-dom'
 
 const PostDetailPage = () => {
   const { postId } = useParams<{ postId: string }>()
@@ -13,6 +14,8 @@ const PostDetailPage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   // error という状態を作ります。この値は string 型か null のどちらかになります。初期値は null にしておきます。
+
+  const navigate = useNavigate() // 🔄 追加
 
   // 🔁 再試行ボタンで呼び出す関数
   const fetchPost = async () => {
@@ -44,6 +47,28 @@ const PostDetailPage = () => {
     fetchPost()
   }, [postId])
 
+  // 削除処理を定義
+  const handleDelete = async () => {
+    const confirmed = window.confirm('本当にこの記事を削除してもよいですか？')
+    // 「キャンセルされたら、そこで関数を抜けて何もしない」という早期リターンの書き方です。
+    if (!confirmed) return
+
+    try {
+      const res = await fetch(`/api/posts/${postId}`,{
+        method: 'DELETE',
+      })
+
+      if (!res.ok) {
+        throw new Error('削除に失敗しました')
+      }
+
+      // 成功したら一覧ページへ移動
+      navigate('/')
+    } catch (err) {
+      alert('削除中にエラーが発生しました')
+      console.error
+    }
+  }
 
   return (
     <Box>
@@ -82,6 +107,10 @@ const PostDetailPage = () => {
             {post.title}
           </Text>
           <Text whiteSpace="pre-line">{post.content}</Text>
+           {/* 🔽 削除ボタン追加 */}
+            <Button colorScheme="red" mt={4} onClick={handleDelete}>
+              記事を削除
+            </Button>
         </div>
       )}
       {/* ✏️編集ボタンを追加 */}
