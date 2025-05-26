@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import HomePage from './pages/HomePage'
 import PostDetailPage from './pages/PostDetailPage'
 import NewPostPage from './pages/NewPostPage'
+import EditPostPage from './pages/EditPostPage'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/posts/:postId" element={<PostDetailPage />} />
           <Route path='/posts/new' element={<NewPostPage />}></Route>
+          <Route path='/posts/:id/edit' element={<EditPostPage />}></Route>
         </Routes>
       </Container>
       <Footer />
