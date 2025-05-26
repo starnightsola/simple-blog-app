@@ -1,17 +1,39 @@
 import { Box, FormControl, FormLabel, Heading, VStack, Textarea, Button} from '@chakra-ui/react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 
 const NewPostPage = () => {
     // 入力されたタイトルと本文の状態を管理
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
-
-    //　フォームの送信状態（仮）
-    const handleSubmit = (e: React.FormEvent) => {
+    const navigate = useNavigate()
+    
+    //　フォームの送信状態
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log('タイトル：', title)
-        console.log('本文', content)
-        // あとでここにAPI連携を追加する
+        
+        try {
+            const res = await fetch('/api/posts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, content }), //フォームの中身を送る
+            })
+
+            if (!res.ok) {
+                throw new Error('記事の作成に失敗しました')
+            }
+
+            const data = await res.json()
+            console.log('送信成功：', data)
+
+            // 投稿成功後に記事一覧ページに移動（任意）
+            navigate('/') //← useNavigate() を使っている場合
+        }catch (err) {
+            console.error('送信エラー：', err)
+        }
     }
     return (
         <Box maxW="600px" mx="auto">
