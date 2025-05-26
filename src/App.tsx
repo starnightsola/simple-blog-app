@@ -5,6 +5,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import HomePage from './pages/HomePage'
 import PostDetailPage from './pages/PostDetailPage'
+import NewPostPage from './pages/NewPostPage'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/posts/:postId" element={<PostDetailPage />} />
+          <Route path='/posts/new' element={<NewPostPage />}></Route>
         </Routes>
       </Container>
       <Footer />

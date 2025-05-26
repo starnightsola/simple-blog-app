@@ -9,6 +9,9 @@ const Header = () => {
         <ChakraLink as={RouterLink} to="/" fontWeight="bold">
           Home
         </ChakraLink>
+        <ChakraLink as={RouterLink} to="/posts/new" fontWeight="bold">
+          ＋ 新しい記事を作成
+        </ChakraLink>
       </HStack>
     </Box>
   )
