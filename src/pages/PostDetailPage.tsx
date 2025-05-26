@@ -84,7 +84,17 @@ const PostDetailPage = () => {
           <Text whiteSpace="pre-line">{post.content}</Text>
         </div>
       )}
-
+      {/* ✏️編集ボタンを追加 */}
+      <Box mt={4}>
+        <Link
+          as={RouterLink}
+          to={`/posts/${postId}/edit`}
+          color="blue.500"
+          fontWeight="bold"
+        >
+          編集する
+        </Link>
+      </Box>
       {/* ⬅️ 一覧に戻るリンク */}
       <Box mt={8}>
         <Link as={RouterLink} to="/" color="#7089A5">

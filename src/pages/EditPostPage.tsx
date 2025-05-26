@@ -1,20 +1,50 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { Spinner, Text } from "@chakra-ui/react"
-
+import { Spinner, Text, Button, Box, Heading, Input, Textarea } from "@chakra-ui/react"
+import { useNavigate } from "react-router-dom"
 
 const EditPostPage = () => {
-    const { id } = useParams<{ id: string }>()
+    const { id: postId } = useParams<{ id: string }>()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
+    const navigate = useNavigate()
 
-    // データ取得処理
+    // ▼ ① フォーム送信イベント
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        try {
+            const res = await fetch(`/api/posts/${postId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title,
+                    content,
+                }),
+            })
+            if(!res.ok){
+                throw new Error('更新に失敗しました')
+            }
+
+            const data = await res.json()
+            console.log('✅ 更新成功:', data)
+
+            // 成功後、詳細ページにリダイレクト
+            navigate(`/posts/${postId}`)
+        } catch (err) {
+            console.error('送信エラー:', err)
+        }
+    }
+
+    // ▼ ② データ取得処理
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const res = await fetch(`/api/post/$id`)
+                const res = await fetch(`/api/posts/${postId}`)
                 if(!res.ok) {
                     throw new Error('記事の取得に失敗しました')
                 }
@@ -30,7 +60,7 @@ const EditPostPage = () => {
             }
         }
         fetchPost()
-    }, [id])
+    }, [postId])
 
     // 読み込み中はぐるぐるマーク表示
     if (loading) {
@@ -44,24 +74,14 @@ const EditPostPage = () => {
 
     //記事情報が取得できたら、画面にタイトルと本文を表示
     return (
-        <form>
-            <div>
-                <label>タイトル：</label>
-                <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-            </div>
-            <div>
-                <label>本文：</label>
-                <textarea
-                    rows={6}
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                />
-            </div>
-        </form>
+        <Box>
+            <Heading mb={4}>記事を編集</Heading>
+            <form onSubmit={handleSubmit}>
+                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="タイトル" mb={4} />
+                <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="本文" mb={4} rows={6} />
+                <Button type="submit" colorScheme="blue">更新</Button>
+            </form>
+        </Box>
     )
 }
 export default EditPostPage
