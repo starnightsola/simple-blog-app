@@ -125,16 +125,15 @@ const PostDetailPage = () => {
 
             <Flex mt={4} justify="space-between">
               {/* 編集ボタンを追加 */}
-              <Box mt={4}>
-                <Link
-                  as={RouterLink}
-                  to={`/posts/${postId}/edit`}
-                  color="blue.500"
-                  fontWeight="bold"
-                >
-                  編集する
-                </Link>
-              </Box>
+              <Button
+                as={RouterLink}
+                to={`/posts/${postId}/edit`}
+                colorScheme="blue"
+                variant="solid"
+                mt={4}
+              >
+                編集する
+              </Button>
               
               {/* 🔽 削除ボタン追加 */}
               <Button colorScheme="red" mt={4} onClick={handleDelete}>

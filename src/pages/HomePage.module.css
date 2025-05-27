@@ -7,9 +7,22 @@
 
 .postCard {
   padding: 1rem;
-  border: 1px solid #7089A5;
   border-radius: 8px;
-  background-color: #F3FAC5;
+  background-color: #F8F9D7;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.postCard:hover {
+  transform: translateY(-4px); /* 少し上に移動 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 影を追加 */
+}
+
+.postCard a {
+  text-decoration: none; /* 通常時も下線なし */
+}
+
+.postCard a:hover {
+  text-decoration: none; /* hover時の下線もなし */
 }
 .postTitleLink {
   margin-bottom: 20px;
@@ -25,6 +38,25 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
   gap: 1rem;
+}
+/* スマホ：1列 */
+@media (max-width: 639px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* タブレット：2列 */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* PC：3列 */
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

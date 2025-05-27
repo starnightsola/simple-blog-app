@@ -3,7 +3,7 @@ import { extendTheme } from '@chakra-ui/react'
 const theme = extendTheme({
     colors: {
         primary: {
-          100: '#C5DFFA', // 任意のキー（100〜900など）
+          100: '#6E85B7', // 任意のキー（100〜900など）
         },
       },
     fonts: {

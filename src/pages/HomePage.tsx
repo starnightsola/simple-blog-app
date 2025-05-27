@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Text, Box, Alert, AlertIcon, Button, AlertTitle, AlertDescription, Select, Skeleton, SkeletonText } from '@chakra-ui/react'
+import { Text, Box, Alert, AlertIcon, Button, AlertTitle, AlertDescription, Skeleton, SkeletonText } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { Link } from '@chakra-ui/react'
 import type { Post } from '../types/Post' // 型を別ファイルに定義している場合
-import type { User } from '../types/User'
+// import type { User } from '../types/User'
 import styles from './HomePage.module.css'
 import loadingStyles from './Loading.module.css'
 import { motion } from 'framer-motion'
@@ -15,21 +15,6 @@ const HomePage = () => {
   const [error, setError] = useState<string | null>(null)
   
   // error という状態を作ります。この値は string 型か null のどちらかになります。初期値は null にしておきます。
-
-  // お気に入り記事だけを絞り込んで表示するボタンを一覧ページに追加しよう！
-  const [showFavorites, setShowFavorites] = useState(false)
-
-  // 記事一覧ページ（HomePage）に、特定のユーザーの投稿だけを表示するセレクトボックスを追加
-  // ユーザー一覧（セレクト用の選択肢）
-  const [users, setUsers] = useState<User[]>([])
-  // 選択されたユーザーID（フィルター用）
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
-
-  // フィルターを合体させる
-  const filteredPosts = posts
-    .filter((post) => selectedUserId === null || post.userId === selectedUserId)
-    .filter((post) => !showFavorites || post.id <= 5)
-
 
   
   const fetchPosts = async () => {
@@ -66,33 +51,19 @@ const HomePage = () => {
     fetchPosts()
   }, [])
   
-  
-  const handleUserChange = (
-    e: React.ChangeEvent<HTMLSelectElement> // ← 型ヒント（ChakraのSelectもこれ）
-  ) => {
-    const value = e.target.value
-    setSelectedUserId(value === "" ? null : Number(value))
-  }
+  // ページ情報を追加
+  const [currentPage, setCurrentPage] = useState(1)
+  const postsPerPage = 8
 
-  const fetchUsers = async () => {
-    try {
-      const res = await fetch('https://jsonplaceholder.typicode.com/users')
+  // ページごとに表示する記事を切り出す
+  const indexOfLastPost = currentPage * postsPerPage
+  const indexOfFirstPost = indexOfLastPost - postsPerPage
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost)
 
-      if (!res.ok) {
-        throw new Error('データの取得に失敗しました')  // 明示的にエラーを投げる
-      }
+  // ページ数の配列を作成
+  const totalPages = Math.ceil(posts.length / postsPerPage)
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
 
-      const data = await res.json()
-      setUsers(data)
-    } catch (err: unknown) {
-      // ネットエラーや throw new Error() の処理がここに来る
-      console.error('取得失敗:', err)
-    }
-  }
-  useEffect(() => {
-    fetchUsers()
-  }, [])
-  
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -117,18 +88,7 @@ const HomePage = () => {
               />
             </Box>
           )}
-          {!loading && (
-            <Select placeholder="ユーザーを選択" onChange={handleUserChange} mb={4}>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              ))}
-            </Select>
-          )}
-          <Button onClick={() => setShowFavorites(!showFavorites)} mb={4}>
-            {showFavorites ? 'すべて表示' : 'お気に入りのみ'}
-          </Button>
+         
 
           {/* ⚠️ エラー表示 + 再試行ボタン */}
           {error && (
@@ -149,22 +109,40 @@ const HomePage = () => {
               // !error → エラーが起きていなければ
               !error &&
               //   posts.map(...) → 記事一覧を1件ずつ表示
-              filteredPosts.map((post) => (
+              currentPosts.map((post) => (
                 <div key={post.id} className={styles.postCard}>
                   <Link
                     as={RouterLink}
                     to={`/posts/${post.id}`}
-                    fontWeight="bold"
-                    fontSize="lg"
+                    
                   >
-                    <Text className={styles.postTitle} isTruncated>
+                    <Text className={styles.postTitle} isTruncated fontWeight="bold"
+                    fontSize="lg">
                       {post.title}
                     </Text>
+                    <Text noOfLines={2}>{post.content}</Text>
                   </Link>
-                  <Text noOfLines={2}>{post.content}</Text>
                 </div>
               ))}
           </div>
+          <Box mt={8} textAlign="center">
+            <Button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} mr={2} isDisabled={currentPage === 1}>
+              Prev
+            </Button>
+            {pageNumbers.map((num) => (
+              <Button
+                key={num}
+                onClick={() => setCurrentPage(num)}
+                colorScheme={num === currentPage ? "blue" : "gray"}
+                mr={1}
+              >
+                {num}
+              </Button>
+            ))}
+            <Button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} ml={2} isDisabled={currentPage === totalPages}>
+              Next
+            </Button>
+          </Box>
       </Box>
     </motion.div>
   )
