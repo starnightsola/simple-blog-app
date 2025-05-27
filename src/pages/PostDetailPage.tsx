@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Text, Spinner, Alert, AlertIcon, AlertTitle, AlertDescription, Button } from '@chakra-ui/react'
+import { Box, Text, Alert, AlertIcon, AlertTitle, AlertDescription, Button, Skeleton, SkeletonText,Flex } from '@chakra-ui/react'
 import type { Post } from '../types/Post'
 import { Link as RouterLink } from 'react-router-dom'
 import { Link } from '@chakra-ui/react'
@@ -76,15 +76,23 @@ const PostDetailPage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 0.3 }}
     >
       <Box>
         <h2 className={styles.title}>記事詳細</h2>
         {/* 🔄 ローディング表示 */}
         {loading && (
           <Box className={loadingStyles.loadingBox}>
-            <Spinner size="lg" />
-            <Text className={loadingStyles.spinnerText}>記事を読み込み中です...</Text>
+            <Box p={4} borderWidth="1px" borderRadius="md">
+              <Skeleton height="32px" mb={4} />
+              <SkeletonText
+                noOfLines={4}
+                spacing="4"
+                skeletonHeight="3"
+                startColor="gray.100"
+                endColor="gray.300"
+              />
+            </Box>
           </Box>
         )}
         {/* ⚠️ エラー表示 + 再試行ボタン */}
@@ -114,23 +122,29 @@ const PostDetailPage = () => {
               {post.title}
             </Text>
             <Text whiteSpace="pre-line">{post.content}</Text>
-            {/* 🔽 削除ボタン追加 */}
+
+            <Flex mt={4} justify="space-between">
+              {/* 編集ボタンを追加 */}
+              <Box mt={4}>
+                <Link
+                  as={RouterLink}
+                  to={`/posts/${postId}/edit`}
+                  color="blue.500"
+                  fontWeight="bold"
+                >
+                  編集する
+                </Link>
+              </Box>
+              
+              {/* 🔽 削除ボタン追加 */}
               <Button colorScheme="red" mt={4} onClick={handleDelete}>
                 記事を削除
               </Button>
+            </Flex>
           </div>
         )}
-        {/* ✏️編集ボタンを追加 */}
-        <Box mt={4}>
-          <Link
-            as={RouterLink}
-            to={`/posts/${postId}/edit`}
-            color="blue.500"
-            fontWeight="bold"
-          >
-            編集する
-          </Link>
-        </Box>
+        
+        
         {/* ⬅️ 一覧に戻るリンク */}
         <Box mt={8}>
           <Link as={RouterLink} to="/" color="#7089A5">

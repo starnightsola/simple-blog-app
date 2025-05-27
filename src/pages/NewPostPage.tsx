@@ -40,7 +40,7 @@ const NewPostPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.3 }}
         >
             <Box maxW="600px" mx="auto">
                 <Heading mb={6}>新規記事作成</Heading>

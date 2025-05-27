@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Spinner, Text, Box, Alert, AlertIcon, Button, AlertTitle, AlertDescription, Select } from '@chakra-ui/react'
+import { Text, Box, Alert, AlertIcon, Button, AlertTitle, AlertDescription, Select, Skeleton, SkeletonText } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { Link } from '@chakra-ui/react'
 import type { Post } from '../types/Post' // 型を別ファイルに定義している場合
@@ -98,7 +98,7 @@ const HomePage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 0.3 }}
     >
       <Box>
           <h2 className={styles.title}>記事一覧</h2>
@@ -107,8 +107,14 @@ const HomePage = () => {
           {/* 🔄 ローディング表示 */}
           {loading && (
             <Box className={loadingStyles.loadingBox}>
-              <Spinner size="lg" />
-              <Text className={loadingStyles.spinnerText}>記事を読み込み中です...</Text>
+              <Skeleton height="32px" mb={4} />
+              <SkeletonText
+                noOfLines={4}
+                spacing="4"
+                skeletonHeight="3"
+                startColor="gray.100"
+                endColor="gray.300"
+              />
             </Box>
           )}
           {!loading && (
