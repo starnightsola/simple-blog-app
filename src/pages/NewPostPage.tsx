@@ -1,7 +1,7 @@
 import { Box, FormControl, FormLabel, Heading, VStack, Textarea, Button} from '@chakra-ui/react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import { motion } from 'framer-motion'
 
 const NewPostPage = () => {
     // 入力されたタイトルと本文の状態を管理
@@ -36,33 +36,40 @@ const NewPostPage = () => {
         }
     }
     return (
-        <Box maxW="600px" mx="auto">
-            <Heading mb={6}>新規記事作成</Heading>
-            <form onSubmit={handleSubmit}>
-                <VStack spacing={4} align="stretch">
-                    <FormControl>
-                        <FormLabel>タイトル</FormLabel>
-                        <input
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            placeholder='記事のタイトル'
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <FormLabel>本文</FormLabel>
-                        <Textarea
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            placeholder='本文を入力'
-                            rows={6}
-                        />
-                    </FormControl>
-                    <Button type='submit' colorScheme='blue'>
-                        投稿する
-                    </Button>
-                </VStack>
-            </form>
-        </Box>
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+        >
+            <Box maxW="600px" mx="auto">
+                <Heading mb={6}>新規記事作成</Heading>
+                <form onSubmit={handleSubmit}>
+                    <VStack spacing={4} align="stretch">
+                        <FormControl>
+                            <FormLabel>タイトル</FormLabel>
+                            <input
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                placeholder='記事のタイトル'
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <FormLabel>本文</FormLabel>
+                            <Textarea
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                                placeholder='本文を入力'
+                                rows={6}
+                            />
+                        </FormControl>
+                        <Button type='submit' colorScheme='blue'>
+                            投稿する
+                        </Button>
+                    </VStack>
+                </form>
+            </Box>
+        </motion.div>
     )
 }
 export default NewPostPage

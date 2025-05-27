@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { Spinner, Text, Button, Box, Heading, Input, Textarea } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom"
+import { motion } from 'framer-motion'
 
 const EditPostPage = () => {
     const { id: postId } = useParams<{ id: string }>()
@@ -74,14 +75,21 @@ const EditPostPage = () => {
 
     //記事情報が取得できたら、画面にタイトルと本文を表示
     return (
-        <Box>
-            <Heading mb={4}>記事を編集</Heading>
-            <form onSubmit={handleSubmit}>
-                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="タイトル" mb={4} />
-                <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="本文" mb={4} rows={6} />
-                <Button type="submit" colorScheme="blue">更新</Button>
-            </form>
-        </Box>
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+        >
+            <Box>
+                <Heading mb={4}>記事を編集</Heading>
+                <form onSubmit={handleSubmit}>
+                    <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="タイトル" mb={4} />
+                    <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="本文" mb={4} rows={6} />
+                    <Button type="submit" colorScheme="blue">更新</Button>
+                </form>
+            </Box>
+        </motion.div>
     )
 }
 export default EditPostPage

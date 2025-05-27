@@ -6,6 +6,7 @@ import type { Post } from '../types/Post' // 型を別ファイルに定義し�
 import type { User } from '../types/User'
 import styles from './HomePage.module.css'
 import loadingStyles from './Loading.module.css'
+import { motion } from 'framer-motion'
 
 const HomePage = () => {
   // 状態（データや表示の状況）を管理する
@@ -93,66 +94,73 @@ const HomePage = () => {
   }, [])
   
   return (
-    <Box>
-        <h2 className={styles.title}>記事一覧</h2>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <Box>
+          <h2 className={styles.title}>記事一覧</h2>
 
-        {/* `loading` が `true` のときだけ `<Spinner>`（読み込み中のぐるぐる）を表示 */}
-        {/* 🔄 ローディング表示 */}
-        {loading && (
-          <Box className={loadingStyles.loadingBox}>
-            <Spinner size="lg" />
-            <Text className={loadingStyles.spinnerText}>記事を読み込み中です...</Text>
-          </Box>
-        )}
-        {!loading && (
-          <Select placeholder="ユーザーを選択" onChange={handleUserChange} mb={4}>
-            {users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </Select>
-        )}
-        <Button onClick={() => setShowFavorites(!showFavorites)} mb={4}>
-          {showFavorites ? 'すべて表示' : 'お気に入りのみ'}
-        </Button>
-
-        {/* ⚠️ エラー表示 + 再試行ボタン */}
-        {error && (
-          <Alert status="error" mb={4} flexDirection="column" alignItems="start" borderRadius="md">
-            <AlertIcon />
-            <Box>
-              <AlertTitle mb={1}>記事の取得に失敗しました</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
+          {/* `loading` が `true` のときだけ `<Spinner>`（読み込み中のぐるぐる）を表示 */}
+          {/* 🔄 ローディング表示 */}
+          {loading && (
+            <Box className={loadingStyles.loadingBox}>
+              <Spinner size="lg" />
+              <Text className={loadingStyles.spinnerText}>記事を読み込み中です...</Text>
             </Box>
-            <Button size="sm" mt={3} onClick={handleRetry}>
-              再試行
-            </Button>
-          </Alert>
-        )}
-        <div className={styles.grid}>
-           {/* !loading → 読み込みが終わったら */}
-          {!loading &&
-            // !error → エラーが起きていなければ
-            !error &&
-            //   posts.map(...) → 記事一覧を1件ずつ表示
-            filteredPosts.map((post) => (
-              <div key={post.id} className={styles.postCard}>
-                <Link
-                  as={RouterLink}
-                  to={`/posts/${post.id}`}
-                  fontWeight="bold"
-                  fontSize="lg"
-                >
-                  <Text className={styles.postTitle} isTruncated>
-                    {post.title}
-                  </Text>
-                </Link>
-                <Text noOfLines={2}>{post.content}</Text>
-              </div>
-            ))}
-        </div>
-    </Box>
+          )}
+          {!loading && (
+            <Select placeholder="ユーザーを選択" onChange={handleUserChange} mb={4}>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.name}
+                </option>
+              ))}
+            </Select>
+          )}
+          <Button onClick={() => setShowFavorites(!showFavorites)} mb={4}>
+            {showFavorites ? 'すべて表示' : 'お気に入りのみ'}
+          </Button>
+
+          {/* ⚠️ エラー表示 + 再試行ボタン */}
+          {error && (
+            <Alert status="error" mb={4} flexDirection="column" alignItems="start" borderRadius="md">
+              <AlertIcon />
+              <Box>
+                <AlertTitle mb={1}>記事の取得に失敗しました</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Box>
+              <Button size="sm" mt={3} onClick={handleRetry}>
+                再試行
+              </Button>
+            </Alert>
+          )}
+          <div className={styles.grid}>
+            {/* !loading → 読み込みが終わったら */}
+            {!loading &&
+              // !error → エラーが起きていなければ
+              !error &&
+              //   posts.map(...) → 記事一覧を1件ずつ表示
+              filteredPosts.map((post) => (
+                <div key={post.id} className={styles.postCard}>
+                  <Link
+                    as={RouterLink}
+                    to={`/posts/${post.id}`}
+                    fontWeight="bold"
+                    fontSize="lg"
+                  >
+                    <Text className={styles.postTitle} isTruncated>
+                      {post.title}
+                    </Text>
+                  </Link>
+                  <Text noOfLines={2}>{post.content}</Text>
+                </div>
+              ))}
+          </div>
+      </Box>
+    </motion.div>
   )
 }
 

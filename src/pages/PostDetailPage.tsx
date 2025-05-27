@@ -7,6 +7,7 @@ import { Link } from '@chakra-ui/react'
 import styles from './PostDetail.module.css'
 import loadingStyles from './Loading.module.css'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 
 const PostDetailPage = () => {
   const { postId } = useParams<{ postId: string }>()
@@ -71,66 +72,73 @@ const PostDetailPage = () => {
   }
 
   return (
-    <Box>
-      <h2 className={styles.title}>記事詳細</h2>
-      {/* 🔄 ローディング表示 */}
-      {loading && (
-        <Box className={loadingStyles.loadingBox}>
-          <Spinner size="lg" />
-          <Text className={loadingStyles.spinnerText}>記事を読み込み中です...</Text>
-        </Box>
-      )}
-      {/* ⚠️ エラー表示 + 再試行ボタン */}
-      {error && (
-        <Alert
-          status="error"
-          mb={4}
-          flexDirection="column"
-          alignItems="start"
-          borderRadius="md"
-        >
-          <AlertIcon />
-          <Box>
-            <AlertTitle mb={1}>エラーが発生しました</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <Box>
+        <h2 className={styles.title}>記事詳細</h2>
+        {/* 🔄 ローディング表示 */}
+        {loading && (
+          <Box className={loadingStyles.loadingBox}>
+            <Spinner size="lg" />
+            <Text className={loadingStyles.spinnerText}>記事を読み込み中です...</Text>
           </Box>
-          <Button size="sm" mt={3} onClick={handleRetry}>
-            再試行
-          </Button>
-        </Alert>
-      )}
-      {/* 読み込みが終わっていて（!loading）、エラーもなく（!error）、データも取得できている（postが存在する）ときに実行。 */}
-      {/* ✅ 記事表示 */}
-      {!loading && !error && post && (
-        <div className={styles.postCard}>
-          <Text fontWeight="bold" fontSize="xl" className={styles.postTitle}>
-            {post.title}
-          </Text>
-          <Text whiteSpace="pre-line">{post.content}</Text>
-           {/* 🔽 削除ボタン追加 */}
-            <Button colorScheme="red" mt={4} onClick={handleDelete}>
-              記事を削除
+        )}
+        {/* ⚠️ エラー表示 + 再試行ボタン */}
+        {error && (
+          <Alert
+            status="error"
+            mb={4}
+            flexDirection="column"
+            alignItems="start"
+            borderRadius="md"
+          >
+            <AlertIcon />
+            <Box>
+              <AlertTitle mb={1}>エラーが発生しました</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Box>
+            <Button size="sm" mt={3} onClick={handleRetry}>
+              再試行
             </Button>
-        </div>
-      )}
-      {/* ✏️編集ボタンを追加 */}
-      <Box mt={4}>
-        <Link
-          as={RouterLink}
-          to={`/posts/${postId}/edit`}
-          color="blue.500"
-          fontWeight="bold"
-        >
-          編集する
-        </Link>
+          </Alert>
+        )}
+        {/* 読み込みが終わっていて（!loading）、エラーもなく（!error）、データも取得できている（postが存在する）ときに実行。 */}
+        {/* ✅ 記事表示 */}
+        {!loading && !error && post && (
+          <div className={styles.postCard}>
+            <Text fontWeight="bold" fontSize="xl" className={styles.postTitle}>
+              {post.title}
+            </Text>
+            <Text whiteSpace="pre-line">{post.content}</Text>
+            {/* 🔽 削除ボタン追加 */}
+              <Button colorScheme="red" mt={4} onClick={handleDelete}>
+                記事を削除
+              </Button>
+          </div>
+        )}
+        {/* ✏️編集ボタンを追加 */}
+        <Box mt={4}>
+          <Link
+            as={RouterLink}
+            to={`/posts/${postId}/edit`}
+            color="blue.500"
+            fontWeight="bold"
+          >
+            編集する
+          </Link>
+        </Box>
+        {/* ⬅️ 一覧に戻るリンク */}
+        <Box mt={8}>
+          <Link as={RouterLink} to="/" color="#7089A5">
+            ← 記事一覧に戻る
+          </Link>
+        </Box>
       </Box>
-      {/* ⬅️ 一覧に戻るリンク */}
-      <Box mt={8}>
-        <Link as={RouterLink} to="/" color="#7089A5">
-          ← 記事一覧に戻る
-        </Link>
-      </Box>
-    </Box>
+    </motion.div>
   )
 }
 
