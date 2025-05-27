@@ -1,26 +1,48 @@
 # Simple Blog App
 
-## 📖 概要
-React + TypeScript + Chakra UI を使ったシンプルなブログ風アプリケーションです。  
-外部API（[JSONPlaceholder](https://jsonplaceholder.typicode.com/)）から記事を取得し、一覧表示と詳細表示ができます。
+## 概要
+React（フロントエンド）× Express + SQLite（バックエンド）のシンプルなブログ投稿アプリケーションです。記事の作成・編集・削除・閲覧が可能で、ページ遷移アニメーションやスケルトンローディングも搭載しています。
 
-## 🛠 使用技術
-- React
-- TypeScript
-- Vite
-- Chakra UI
-- React Router DOM
-- CSS Modules
+## 機能概要
 
-## ✨ 主な機能
-- 記事一覧ページ（カード風の表示）
-- 記事詳細ページ（ルーティングで表示切り替え）
-- ローディングスピナー
-- エラー時の `Alert` と再試行ボタン
-- レスポンシブデザイン対応（スマホ/PC）
+- 記事の一覧表示（ページネーション対応）
+- 記事の詳細閲覧
+- 記事の新規作成
+- 記事の編集・削除
+- APIサーバーとの接続（CORS回避のプロキシ設定済）
+- スケルトンローディング表示
+- フェードイン・アウトのページ遷移アニメーション（Framer Motion 使用）
 
-## 🚀 起動方法
+## 使用技術
 
-```bash
+- Frontend: React + TypeScript + Chakra UI
+- Backend: Node.js + Express
+- Database: SQLite
+- Animation: Framer Motion
+- 開発補助: Vite, nodemon, Postman
+
+## ディレクトリ構成
+├── backend               # Express + SQLite の API サーバー
+│   └── src/
+├── public/               # 静的ファイル（画像など）
+├── src/                  # React のフロントエンドコード
+│   ├── pages/
+│   ├── components/
+│   └── ...
+├── vite.config.ts        # Vite の設定ファイル（プロキシなど）
+├── tsconfig.json         # TypeScript の設定
+├── package.json          # フロントエンドの依存関係
+
+
+##  セットアップ手順
+
+###  1. バックエンドの起動
+
+cd backend
+npm install
+npm run dev
+
+###  2.フロントエンドの起動
+
 npm install
 npm run dev
