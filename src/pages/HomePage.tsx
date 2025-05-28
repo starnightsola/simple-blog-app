@@ -55,7 +55,7 @@ const HomePage = () => {
   
   // ページ情報を追加
   const [currentPage, setCurrentPage] = useState(1)
-  const postsPerPage = 9
+  const postsPerPage = 10
 
   // ページごとに表示する記事を切り出す
   const indexOfLastPost = currentPage * postsPerPage
@@ -65,26 +65,6 @@ const HomePage = () => {
   // ページ数の配列を作成
   const totalPages = Math.ceil(posts.length / postsPerPage)
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
-
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts`);
-
-        if (!res.ok) throw new Error('❌ エラーコード: ' + res.status);
-
-        const data = await res.json();
-        console.log('✅ データ取得成功:', data);
-      } catch (err) {
-        console.error('❌ fetch error:', err);
-      }
-    };
-
-    // 2秒後に実行（Renderがスリープ中の対策）
-    const timeout = setTimeout(fetchPosts, 2000);
-    return () => clearTimeout(timeout);
-  }, []);
 
 
   return (
