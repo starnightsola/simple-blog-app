@@ -4,6 +4,7 @@ const postsRouter = require('./routes/posts')
 
 const app = express()
 
+
 // ✅ 特定のオリジンだけ許可（VercelのURL）
 const allowedOrigins = ['https://simple-blog-app-beta.vercel.app']
 app.use(cors({
