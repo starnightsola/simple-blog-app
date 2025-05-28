@@ -22,7 +22,7 @@ const PostDetailPage = () => {
   const fetchPost = async () => {
     if (!postId) return
     try {
-      const res = await fetch(`/api/posts/${postId}`)
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`)
       if (!res.ok) throw new Error('データの取得に失敗しました')
       const data = await res.json()
       setPost(data)
@@ -55,7 +55,7 @@ const PostDetailPage = () => {
     if (!confirmed) return
 
     try {
-      const res = await fetch(`/api/posts/${postId}`,{
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`,{
         method: 'DELETE',
       })
 

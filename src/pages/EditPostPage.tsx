@@ -17,7 +17,7 @@ const EditPostPage = () => {
         e.preventDefault()
 
         try {
-            const res = await fetch(`/api/posts/${postId}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ const EditPostPage = () => {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const res = await fetch(`/api/posts/${postId}`)
+                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`)
                 if(!res.ok) {
                     throw new Error('記事の取得に失敗しました')
                 }

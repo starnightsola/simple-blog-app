@@ -20,7 +20,7 @@ const HomePage = () => {
   const fetchPosts = async () => {
     try {
       // `fetch` を使って、外部APIにGETリクエストを送信。
-      const res = await fetch('/api/posts')
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts`)
 
       // res.ok はステータスコードが 200系かどうか（成功かどうか）を示します。
       if (!res.ok) throw new Error('記事の取得に失敗しました')
@@ -50,6 +50,8 @@ const HomePage = () => {
   useEffect(() => {
     fetchPosts()
   }, [])
+
+  
   
   // ページ情報を追加
   const [currentPage, setCurrentPage] = useState(1)
@@ -63,6 +65,27 @@ const HomePage = () => {
   // ページ数の配列を作成
   const totalPages = Math.ceil(posts.length / postsPerPage)
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
+
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts`);
+
+        if (!res.ok) throw new Error('❌ エラーコード: ' + res.status);
+
+        const data = await res.json();
+        console.log('✅ データ取得成功:', data);
+      } catch (err) {
+        console.error('❌ fetch error:', err);
+      }
+    };
+
+    // 2秒後に実行（Renderがスリープ中の対策）
+    const timeout = setTimeout(fetchPosts, 2000);
+    return () => clearTimeout(timeout);
+  }, []);
+
 
   return (
     <motion.div

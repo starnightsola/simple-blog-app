@@ -14,7 +14,7 @@ const NewPostPage = () => {
         e.preventDefault()
         
         try {
-            const res = await fetch('/api/posts', {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
