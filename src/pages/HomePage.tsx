@@ -55,7 +55,7 @@ const HomePage = () => {
   
   // ページ情報を追加
   const [currentPage, setCurrentPage] = useState(1)
-  const postsPerPage = 8
+  const postsPerPage = 9
 
   // ページごとに表示する記事を切り出す
   const indexOfLastPost = currentPage * postsPerPage
