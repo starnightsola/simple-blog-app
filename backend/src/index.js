@@ -4,7 +4,13 @@ const postsRouter = require('./routes/posts')
 
 const app = express()
 
-app.use(cors()) // どこからでもアクセス許可（本番では制限も可）
+// ✅ 特定のオリジンだけ許可（VercelのURL）
+const allowedOrigins = ['https://simple-blog-app-beta.vercel.app']
+app.use(cors({
+  origin: allowedOrigins
+}))
+
+
 // ⭐️ この1行を追加！リクエストの JSON をパースできるようにする
 app.use(express.json())
 
