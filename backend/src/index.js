@@ -17,6 +17,8 @@ app.use(express.json())
 // ルーティング
 app.use('/api/posts', postsRouter)
 
-app.listen(3000, () => {
-  console.log('🚀 サーバー起動中 http://localhost:3000')
-})
+// Renderで必要なPORT環境変数を使用
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 サーバー起動中 http://localhost:${PORT}`);
+});
