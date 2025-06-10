@@ -8,13 +8,15 @@ const app = express()
 // ✅ 特定のオリジンだけ許可（本番と開発）
 const allowedOrigins = [
   'https://simple-blog-app-beta.vercel.app',
-  'http://localhost:5173'
+  'http://localhost:5173',
+  'http://localhost:5174'
 ]
 app.use(cors({
-  origin: (origin, callback) => {
+  origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true)
     } else {
+      console.log('❌ Not allowed by CORS:', origin)
       callback(new Error('Not allowed by CORS'))
     }
   }
