@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Text, Box, Alert, AlertIcon, Button, AlertTitle, AlertDescription, Skeleton, SkeletonText } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 import { Link } from '@chakra-ui/react'
@@ -7,50 +7,25 @@ import type { Post } from '../types/Post' // 型を別ファイルに定義し�
 import styles from './HomePage.module.css'
 import loadingStyles from './Loading.module.css'
 import { motion } from 'framer-motion'
+import { useQuery } from '@tanstack/react-query'
 
+const fetchPosts = async (): Promise<Post[]> => {
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts`)
+  if (!res.ok) throw new Error('記事の取得に失敗しました')
+  return res.json()
+}
 const HomePage = () => {
   // 状態（データや表示の状況）を管理する
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  
-  // error という状態を作ります。この値は string 型か null のどちらかになります。初期値は null にしておきます。
-
-  
-  const fetchPosts = async () => {
-    try {
-      // `fetch` を使って、外部APIにGETリクエストを送信。
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts`)
-
-      // res.ok はステータスコードが 200系かどうか（成功かどうか）を示します。
-      if (!res.ok) throw new Error('記事の取得に失敗しました')
-
-      // JSON形式に変換
-      const data = await res.json()
-      setPosts(data)
-
-      // try 内でエラーが発生したときに、代わりに実行される処理
-      // unknown 型は「何が来るか分からないから、ちゃんと中身を調べてね」という安全な型です。
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message)
-      } else {
-        setError('予期しないエラーが発生しました')
-      }
-    } finally {
-      setLoading(false)
-      //  読み込みが終わったのでスピナーを消す
-    }
-  }
-  const handleRetry = () => {
-    setError(null)
-    setLoading(true)
-    fetchPosts()
-  }
-  useEffect(() => {
-    fetchPosts()
-  }, [])
-
+  const {
+    data: posts = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+  })
   
   
   // ページ情報を追加
@@ -79,7 +54,7 @@ const HomePage = () => {
 
           {/* `loading` が `true` のときだけ `<Spinner>`（読み込み中のぐるぐる）を表示 */}
           {/* 🔄 ローディング表示 */}
-          {loading && (
+          {isLoading && (
             <Box className={loadingStyles.loadingBox}>
               <Skeleton height="32px" mb={4} />
               <SkeletonText
@@ -94,23 +69,23 @@ const HomePage = () => {
          
 
           {/* ⚠️ エラー表示 + 再試行ボタン */}
-          {error && (
+          {isError && (
             <Alert status="error" mb={4} flexDirection="column" alignItems="start" borderRadius="md">
               <AlertIcon />
               <Box>
                 <AlertTitle mb={1}>記事の取得に失敗しました</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription>{(error as Error).message}</AlertDescription>
               </Box>
-              <Button size="sm" mt={3} onClick={handleRetry}>
+              <Button size="sm" mt={3} onClick={() => refetch()}>
                 再試行
               </Button>
             </Alert>
           )}
           <div className={styles.grid}>
             {/* !loading → 読み込みが終わったら */}
-            {!loading &&
+            {!isLoading &&
               // !error → エラーが起きていなければ
-              !error &&
+              !isError &&
               //   posts.map(...) → 記事一覧を1件ずつ表示
               currentPosts.map((post) => (
                 <div key={post.id} className={styles.postCard}>
