@@ -41,6 +41,23 @@ const HomePage = () => {
   const totalPages = Math.ceil(posts.length / postsPerPage)
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
 
+  // 親（リスト全体）のバリアント
+  const listVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2, // 子要素の表示を0.1秒ずつ遅らせて表示
+      },
+    },
+  }
+
+  // 子（各記事カード）のバリアント
+  const itemVariants = {
+    hidden: { opacity: 0, y: 40, scale: 0.95 },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: 'easeOut' } },
+  }
+
 
   return (
     <motion.div
@@ -86,14 +103,23 @@ const HomePage = () => {
               </Button>
             </Alert>
           )}
-          <div className={styles.grid}>
+          <motion.div
+            className={styles.grid}
+            variants={listVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {/* !loading → 読み込みが終わったら */}
             {!isLoading &&
               // !error → エラーが起きていなければ
               !isError &&
               //   posts.map(...) → 記事一覧を1件ずつ表示
               currentPosts.map((post) => (
-                <div key={post.id} className={styles.postCard}>
+                <motion.div
+                  key={post.id}
+                  className={styles.postCard}
+                  variants={itemVariants} // 子にも variants を追加！
+                >
                   <Link
                     as={RouterLink}
                     to={`/posts/${post.id}`}
@@ -105,9 +131,9 @@ const HomePage = () => {
                     </Text>
                     <Text noOfLines={2}>{post.content}</Text>
                   </Link>
-                </div>
+                </motion.div>
               ))}
-          </div>
+          </motion.div>
           <Box mt={8} textAlign="center">
             <Button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} mr={2} isDisabled={currentPage === 1}>
               Prev
