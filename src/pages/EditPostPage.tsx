@@ -3,16 +3,41 @@ import { useParams } from "react-router-dom"
 import { Spinner, Text, Button, Box, Heading, Input, Textarea } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom"
 import { motion } from 'framer-motion'
+import { useQuery } from '@tanstack/react-query'
+import type { Post } from "../types/Post" // Post型を使用
+
+// 記事を1件取得する関数（fetch API 使用）
+const fetchPost = async (postId: string): Promise<Post> => {
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`)
+  if (!res.ok) throw new Error('記事の取得に失敗しました')
+  return res.json()
+}
 
 const EditPostPage = () => {
+    // URLパラメータから postId を取得
     const { id: postId } = useParams<{ id: string }>()
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
-    const [title, setTitle] = useState('')
-    const [content, setContent] = useState('')
     const navigate = useNavigate()
 
-    // ▼ ① フォーム送信イベント
+    // useQuery を使って記事データを取得
+    const { data: post, isLoading, isError, error } = useQuery({
+        queryKey: ['post', postId],         // キャッシュキー
+        queryFn: () => fetchPost(postId!),  // 非同期関数
+        enabled: !!postId,                  // postId があるときのみ実行
+    })
+
+    // 編集フォーム用に状態管理
+    const [title, setTitle] = useState('')
+    const [content, setContent] = useState('')
+
+    // post取得後、初期値をstateにセット（1回のみ）
+    useEffect(() => {
+        if (post) {
+        setTitle(post.title)
+        setContent(post.content)
+        }
+    }, [post])
+
+    // フォーム送信時の処理
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
@@ -22,58 +47,28 @@ const EditPostPage = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
+                body: JSON.stringify({ // 入力内容を送信
                     title,
                     content,
                 }),
             })
-            if(!res.ok){
-                throw new Error('更新に失敗しました')
-            }
+            if (!res.ok) throw new Error('更新に失敗しました')
 
-            const data = await res.json()
-            console.log('✅ 更新成功:', data)
-
-            // 成功後、詳細ページにリダイレクト
+            // 成功後、詳細ページへリダイレクト
             navigate(`/posts/${postId}`)
         } catch (err) {
-            console.error('送信エラー:', err)
+            alert('更新エラー')
+            console.error(err)
         }
     }
 
-    // ▼ ② データ取得処理
-    useEffect(() => {
-        const fetchPost = async () => {
-            try {
-                const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`)
-                if(!res.ok) {
-                    throw new Error('記事の取得に失敗しました')
-                }
-                const data = await res.json()
+    // ローディング中はスピナー表示
+    if (isLoading) return <Spinner />
 
-                // 取得後に title, content にセット
-                setTitle(data.title)
-                setContent(data.content)
-            } catch (err) {
-                setError('記事取得エラー')
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchPost()
-    }, [postId])
-
-    // 読み込み中はぐるぐるマーク表示
-    if (loading) {
-        return <Spinner />
-    }
-
-    // エラーがある場合、エラーメッセージを表示
-    if (error) {
-        return <Text color="red.500">{error}</Text>
-    }
-
-    //記事情報が取得できたら、画面にタイトルと本文を表示
+    // エラー時はメッセージを表示
+    if (isError) return <Text color="red.500">{(error as Error).message}</Text>
+    
+    // 記事編集フォーム（取得成功時）
     return (
         <motion.div
             initial={{ opacity: 0 }}

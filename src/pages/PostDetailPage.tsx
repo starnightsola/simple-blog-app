@@ -12,15 +12,17 @@ import { useQuery } from '@tanstack/react-query'
 
 const PostDetailPage = () => {
   
- const { postId } = useParams<{ postId: string }>()
+  const { postId } = useParams<{ postId: string }>()
   const navigate = useNavigate()
 
+  // 非同期関数を先に定義
   const fetchPost = async (): Promise<Post> => {
     const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`)
     if (!res.ok) throw new Error('記事の取得に失敗しました')
     return res.json()
   }
 
+  // useQuery で記事詳細を取得
   const {
     data: post,
     isLoading,
