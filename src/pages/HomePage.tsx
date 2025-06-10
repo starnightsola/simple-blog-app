@@ -54,18 +54,23 @@ const HomePage = () => {
 
           {/* `loading` が `true` のときだけ `<Spinner>`（読み込み中のぐるぐる）を表示 */}
           {/* 🔄 ローディング表示 */}
-          {isLoading && (
-            <Box className={loadingStyles.loadingBox}>
-              <Skeleton height="32px" mb={4} />
-              <SkeletonText
-                noOfLines={4}
-                spacing="4"
-                skeletonHeight="3"
-                startColor="gray.100"
-                endColor="gray.300"
-              />
-            </Box>
-          )}
+          <div className={styles.grid}>
+            {isLoading && (
+              Array.from({ length: 6 }).map((_, i) => (
+                <Box key={i} className={loadingStyles.loadingBox}>
+                  <Skeleton height="32px" mb={4} />
+                  <SkeletonText
+                    noOfLines={4}
+                    spacing="4"
+                    skeletonHeight="3"
+                    startColor="gray.100"
+                    endColor="gray.300"
+                  />
+                </Box>
+              ))
+            )}
+          </div>
+          
          
 
           {/* ⚠️ エラー表示 + 再試行ボタン */}
