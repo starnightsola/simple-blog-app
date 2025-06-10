@@ -104,6 +104,7 @@ const HomePage = () => {
             </Alert>
           )}
           <motion.div
+            key={isLoading ? 'loading' : 'loaded'}
             className={styles.grid}
             variants={listVariants}
             initial="hidden"
