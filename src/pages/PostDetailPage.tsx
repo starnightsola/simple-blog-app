@@ -105,7 +105,7 @@ const PostDetailPage = () => {
         {/* ✅ 記事表示 */}
         {!isLoading && !isError && post && (
           <div className={styles.postCard}>
-            <Text fontWeight="bold" fontSize="xl" className={styles.postTitle}>
+            <Text fontWeight="bold" fontSize="xl" className={styles.postTitle} data-testid="post-title-detail">
               {post.title}
             </Text>
             <Text whiteSpace="pre-line">{post.content}</Text>
