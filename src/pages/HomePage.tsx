@@ -57,7 +57,7 @@ const HomePage = () => {
     hidden: { opacity: 0, y: 40, scale: 0.95 },
     visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: 'easeOut' } },
   }
-
+  const [visibleCards, setVisibleCards] = useState<{ [id: number]: boolean }>({}); // ← useState 定義
 
   return (
     <motion.div
@@ -109,6 +109,7 @@ const HomePage = () => {
             variants={listVariants}
             initial="hidden"
             animate="visible"
+            
           >
             {/* !loading → 読み込みが終わったら */}
             {!isLoading &&
@@ -120,6 +121,15 @@ const HomePage = () => {
                   key={post.id}
                   className={styles.postCard}
                   variants={itemVariants} // 子にも variants を追加！
+                  data-testid="post-card"
+                  data-visible={visibleCards[post.id] ? 'true' : 'false'}
+                  onAnimationComplete={() => {
+                    requestAnimationFrame(() => {
+                      setTimeout(() => {
+                        setVisibleCards(prev => ({ ...prev, [post.id]: true }));
+                      }, 0);
+                    });
+                  }}
                 >
                   <Link
                     as={RouterLink}

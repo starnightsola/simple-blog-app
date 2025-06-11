@@ -52,6 +52,7 @@ const NewPostPage = () => {
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 placeholder='記事のタイトル'
+                                data-testid="title-input"
                             />
                         </FormControl>
                         <FormControl>
@@ -61,9 +62,10 @@ const NewPostPage = () => {
                                 onChange={(e) => setContent(e.target.value)}
                                 placeholder='本文を入力'
                                 rows={6}
+                                data-testid="content-input"
                             />
                         </FormControl>
-                        <Button type='submit' colorScheme='blue'>
+                        <Button type='submit' colorScheme='blue' data-testid="submit-button">
                             投稿する
                         </Button>
                     </VStack>

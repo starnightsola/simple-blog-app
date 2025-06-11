@@ -10,7 +10,7 @@ const Header = () => {
           <ChakraLink as={RouterLink} to="/" fontWeight="bold" color="white">
             Home
           </ChakraLink>
-          <ChakraLink as={RouterLink} to="/posts/new" fontWeight="bold" color="white">
+          <ChakraLink as={RouterLink} to="/posts/new" fontWeight="bold" color="white" data-testid="create-link">
             ＋ 新しい記事を作成
           </ChakraLink>
         </Flex>
