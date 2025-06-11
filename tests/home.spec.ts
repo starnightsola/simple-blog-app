@@ -45,8 +45,7 @@ test.describe('トップページ', () => {
     await firstCard.click();
 
     // 詳細ページのh2見出しが表示されているか確認
-    await expect(page.locator('h2')).toBeVisible({ timeout: 5000 });
-
+    await expect(page.getByTestId('post-title')).toBeVisible({ timeout: 5000 });
     // URLが `/posts/数字` の形式であることを確認
     await expect(page).toHaveURL(/\/posts\/\d+/);
   });

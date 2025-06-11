@@ -137,7 +137,7 @@ const HomePage = () => {
                     
                   >
                     <Text className={styles.postTitle} isTruncated fontWeight="bold"
-                    fontSize="lg">
+                    fontSize="lg" data-testid="post-title">
                       {post.title}
                     </Text>
                     <Text noOfLines={2}>{post.content}</Text>
