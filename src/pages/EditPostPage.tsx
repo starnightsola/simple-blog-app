@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { Spinner, Text, Button, Box, Heading, Input, Textarea } from "@chakra-ui/react"
 import { useNavigate } from "react-router-dom"
 import { motion } from 'framer-motion'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Post } from "../types/Post" // Post型を使用
 
 // 記事を1件取得する関数（fetch API 使用）
@@ -28,6 +28,8 @@ const EditPostPage = () => {
     // 編集フォーム用に状態管理
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
+
+    const queryClient = useQueryClient()
 
     // post取得後、初期値をstateにセット（1回のみ）
     useEffect(() => {
@@ -54,6 +56,7 @@ const EditPostPage = () => {
             })
             if (!res.ok) throw new Error('更新に失敗しました')
 
+            await queryClient.invalidateQueries({ queryKey: ['posts'] as const })
             // 成功後、詳細ページへリダイレクト
             navigate(`/posts/${postId}`)
         } catch (err) {

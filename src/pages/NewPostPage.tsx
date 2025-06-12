@@ -2,13 +2,14 @@ import { Box, FormControl, FormLabel, Heading, VStack, Textarea, Button} from '@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useQueryClient } from '@tanstack/react-query'
 
 const NewPostPage = () => {
     // 入力されたタイトルと本文の状態を管理
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const navigate = useNavigate()
-    
+    const queryClient = useQueryClient()
     //　フォームの送信状態
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -29,12 +30,15 @@ const NewPostPage = () => {
             const data = await res.json()
             console.log('送信成功：', data)
 
+            // ✅ 投稿成功後にキャッシュを無効化
+            await queryClient.invalidateQueries({ queryKey: ['posts'] as const })
             // 投稿成功後に記事一覧ページに移動（任意）
             navigate('/') //← useNavigate() を使っている場合
         }catch (err) {
             console.error('送信エラー：', err)
         }
     }
+
     return (
         <motion.div
             initial={{ opacity: 0 }}

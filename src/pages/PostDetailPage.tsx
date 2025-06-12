@@ -7,13 +7,14 @@ import styles from './PostDetail.module.css'
 import loadingStyles from './Loading.module.css'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 
 const PostDetailPage = () => {
   
   const { postId } = useParams<{ postId: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   // 非同期関数を先に定義
   const fetchPost = async (): Promise<Post> => {
@@ -49,6 +50,9 @@ const PostDetailPage = () => {
       if (!res.ok) {
         throw new Error('削除に失敗しました')
       }
+
+      // キャッシュを無効化して一覧再取得
+      await queryClient.invalidateQueries({ queryKey: ['posts'] as const })
 
       // 成功したら一覧ページへ移動
       navigate('/')
