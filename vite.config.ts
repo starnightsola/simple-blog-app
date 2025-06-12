@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import { visualizer } from 'rollup-plugin-visualizer'
+import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -8,8 +9,13 @@ export default defineConfig({
       filename: './dist/report.html', // 出力ファイル名（任意）
       open: true,                     // ビルド後に自動で開く
       gzipSize: true,                 // gzipサイズも表示
-      brotliSize: true                // brotliサイズも表示
+      brotliSize: true,                // brotliサイズも表示
     })],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
   server: {
     proxy: {
       // /api から始まるURLへのリクエストを対象にする
