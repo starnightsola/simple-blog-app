@@ -108,7 +108,7 @@ const PostDetailPage = () => {
             <Text fontWeight="bold" fontSize="xl" className={styles.postTitle} data-testid="post-title-detail">
               {post.title}
             </Text>
-            <Text whiteSpace="pre-line">{post.content}</Text>
+            <Text whiteSpace="pre-line" data-testid="post-content">{post.content}</Text>
 
             <Flex mt={4} justify="space-between">
               {/* 編集ボタンを追加 */}
