@@ -8,13 +8,40 @@ const db = require('../db')
 // 小さな専用ルーティングのかたまりを作る道具です。
 const router = express.Router()
 
-// 記事一覧取得API（GET /api/posts）
-router.get('/',(req,res) => {
-  db.all('SELECT * FROM posts', (err, rows) => {
-    if(err){
-      return res.status(500).json({ error: 'DBエラー'})
+// 記事一覧取得API（GET /api/posts?page=1&limit=10）
+router.get('/', (req, res) => {
+  const page = parseInt(req.query.page) || 1
+  const limit = parseInt(req.query.limit) || 10
+  const offset = (page - 1) * limit
+
+  // ① 総件数を取得
+  db.get('SELECT COUNT(*) AS count FROM posts', (err, countResult) => {
+    if (err) {
+      return res.status(500).json({ error: '件数取得エラー' })
     }
-    res.json(rows)
+
+    const total = countResult.count
+    const totalPages = Math.ceil(total / limit)
+
+    // ② 記事本体を取得（LIMIT & OFFSET付き）
+    db.all(
+      'SELECT * FROM posts ORDER BY createdAt DESC LIMIT ? OFFSET ?',
+      [limit, offset],
+      (err, rows) => {
+        if (err) {
+          return res.status(500).json({ error: 'DBエラー' })
+        }
+
+        // ③ ページネーション情報付きでレスポンス
+        res.json({
+          posts: rows,
+          page,
+          limit,
+          total,
+          totalPages
+        })
+      }
+    )
   })
 })
 
