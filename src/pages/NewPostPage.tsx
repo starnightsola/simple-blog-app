@@ -29,9 +29,15 @@ const NewPostPage = () => {
 
             const data = await res.json()
             console.log('送信成功：', data)
+            // キャッシュの直接更新（即時UI反映したい場合）
+            queryClient.setQueryData(['posts', 1], (old: any) => {
+                if (!old) return;
+                return {
+                    ...old,
+                    posts: [data, ...old.posts],
+                };
+            });
 
-            // ✅ 投稿成功後にキャッシュを無効化
-            await queryClient.invalidateQueries({ queryKey: ['posts'] as const })
             // 投稿成功後に記事一覧ページに移動（任意）
             navigate('/') //← useNavigate() を使っている場合
         }catch (err) {

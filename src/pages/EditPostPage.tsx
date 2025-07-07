@@ -56,7 +56,10 @@ const EditPostPage = () => {
             })
             if (!res.ok) throw new Error('更新に失敗しました')
 
+            // 'posts' というクエリキー（記事一覧のデータ）に関連するキャッシュを 「無効化（invalidate）」 します。
             await queryClient.invalidateQueries({ queryKey: ['posts'] as const })
+            // 'post' + postId で指定される 個別記事の詳細データをキャッシュから無効化します。
+            await queryClient.invalidateQueries({ queryKey: ['post', postId] })
             // 成功後、詳細ページへリダイレクト
             navigate(`/posts/${postId}`)
         } catch (err) {

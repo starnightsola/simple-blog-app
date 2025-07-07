@@ -61,6 +61,12 @@ const HomePage = () => {
   }>({
     queryKey: ['posts', currentPage], // キャッシュキーにページ番号も含める
     queryFn: () => fetchPosts(currentPage, postsPerPage),
+    select: (data) => ({
+      ...data,
+      posts: data.posts.map(post => ({
+        ...post, // すべてのプロパティを残す
+      })),
+    }),
     staleTime: 1000 * 60 * 5, // キャッシュの鮮度を保持（任意）
     gcTime: 1000 * 60 * 10, // ガーベジコレクションまでの時間（任意）
     placeholderData: {

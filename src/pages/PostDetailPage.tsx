@@ -51,8 +51,14 @@ const PostDetailPage = () => {
         throw new Error('削除に失敗しました')
       }
 
-      // キャッシュを無効化して一覧再取得
-      await queryClient.invalidateQueries({ queryKey: ['posts'] as const })
+      // キャッシュから削除された記事を除外（UI即時反映）
+      queryClient.setQueryData(['posts', 1], (old: any) => {
+        if (!old) return;
+        return {
+          ...old,
+          posts: old.posts.filter((p: Post) => p.id !== Number(postId)),
+        };
+      });
 
       // 成功したら一覧ページへ移動
       navigate('/')
