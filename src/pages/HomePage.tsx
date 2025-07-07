@@ -7,7 +7,7 @@ import type { Post } from '../types/Post' // 型を別ファイルに定義し�
 import styles from './HomePage.module.css'
 import loadingStyles from './Loading.module.css'
 import { motion } from 'framer-motion'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 // APIから記事データを取得する関数（ページネーション付き）
 const fetchPosts = async (page: number, limit: number): Promise<{
@@ -21,10 +21,29 @@ const fetchPosts = async (page: number, limit: number): Promise<{
   if (!res.ok) throw new Error('記事の取得に失敗しました')
   return res.json()
 }
+
+// 詳細取得関数を定義
+const fetchPostDetail = async (postId: number): Promise<Post> => {
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/posts/${postId}`);
+  if (!res.ok) throw new Error('記事詳細の取得に失敗しました');
+  return res.json();
+};
 const HomePage = () => {
   // 現在のページ番号を状態として管理
   const [currentPage, setCurrentPage] = useState(1)
   const postsPerPage = 12 // 1ページあたりに表示する記事数
+
+  // クエリクライアントを取得（← ここで取得）
+  const queryClient = useQueryClient();
+
+  // 詳細データのプリフェッチ関数を定義
+  const prefetchPostDetail = (postId: number) => {
+    queryClient.prefetchQuery({
+      queryKey: ['post', postId],
+      queryFn: () => fetchPostDetail(postId),
+      staleTime: 1000 * 60 * 5, // 任意：キャッシュの有効時間
+    });
+  };
 
   // useQueryで記事一覧を取得（ページ番号と件数を指定）
   const {
@@ -44,6 +63,19 @@ const HomePage = () => {
     queryFn: () => fetchPosts(currentPage, postsPerPage),
     staleTime: 1000 * 60 * 5, // キャッシュの鮮度を保持（任意）
     gcTime: 1000 * 60 * 10, // ガーベジコレクションまでの時間（任意）
+    placeholderData: {
+      posts: Array.from({ length: postsPerPage }).map((_, i) => ({
+        id: i,
+        userId: 0,  // 仮のユーザーID（固定値）
+        title: 'Loading...',
+        body: '',
+        content: '',
+      })),
+      page: currentPage,
+      limit: postsPerPage,
+      total: 0,
+      totalPages: 1,
+    },
   })
 
   // アニメーション用バリアント（親要素）
@@ -57,14 +89,6 @@ const HomePage = () => {
     },
   }
 
-  // アニメーション用バリアント（各記事カード）
-  const itemVariants = {
-    hidden: { opacity: 0, y: 40, scale: 0.95 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: 'easeOut' } },
-  }
-
-  // 各カードの表示状態を記録（アニメーション後に表示マークを付ける）
-  const [visibleCards, setVisibleCards] = useState<{ [id: number]: boolean }>({})
 
   return (
     <motion.div
@@ -122,20 +146,15 @@ const HomePage = () => {
             <motion.div
               key={post.id}
               className={styles.postCard}
-              variants={itemVariants}
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
               data-testid="post-card"
-              data-visible={visibleCards[post.id] ? 'true' : 'false'}
-              onAnimationComplete={() => {
-                requestAnimationFrame(() => {
-                  setTimeout(() => {
-                    setVisibleCards(prev => ({ ...prev, [post.id]: true }))
-                  }, 0)
-                })
-              }}
             >
               <Link
                 as={RouterLink}
                 to={`/posts/${post.id}`}
+                onMouseEnter={() => prefetchPostDetail(post.id)}
                 
               >
                 <Text className={styles.postTitle} isTruncated fontWeight="bold"
