@@ -1,5 +1,6 @@
 import { Box, VStack, Link as ChakraLink } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
+import Profile from "./Profile";
 
 type Props = {
   onClose?: () => void;
@@ -8,7 +9,8 @@ type Props = {
 const SidebarContent = ({ onClose }: Props) => {
   return (
     <Box p={{ base: 9, md: 6 }}>
-      <VStack align="start" spacing={4}>
+      <VStack align="center" spacing={4}>
+        <Profile />
         <ChakraLink as={RouterLink} to="/" fontWeight="bold" display="block" width="100%" _hover={{ textDecoration: 'none', color: 'gray.600', }} onClick={onClose}>
           Home
         </ChakraLink>
